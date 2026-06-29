@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Starfruit Express — The Restaurant Profit Operating System</title>
+  <meta name="description" content="A bold, premium redesign that makes procurement and refrigerated delivery feel modern, calm, and under control." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="global.css" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --forest:#0C3B2C;
+      --forest-mid:#165C43;
+      --gold:#EDA920;
+      --gold-l:#F5C84A;
+      --sand:#F7F3EE;
+      --white:#FAFAF9;
+      --char:#191917;
+      --dim:#6B7280;
+      --sage:#7FA690;
+      --terra:#C85F2E;
+      --ice:#D4ECFA;
+      --ice-mid:#89C8E8;
+      --border:rgba(12,59,44,0.12);
+      --shadow: 0 20px 70px rgba(0,0,0,.12);
+
+      --fd:'DM Serif Display',Georgia,serif;
+      --fb:'Inter',-apple-system,sans-serif;
+      --fm:'Space Mono',monospace;
+      --ease:cubic-bezier(0.22,1,0.36,1);
+      --dur-1:.16s;
+      --dur-2:.25s;
+      --dur-3:.4s;
+    }
+
+    html{scroll-behavior:smooth}
+    body{
+      font-family:var(--fb);
+      font-size:15px;
+      line-height:1.72;
+      color:var(--char);
+      background:var(--sand);
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+    img{display:block;max-width:100%}
+    a{color:inherit;text-decoration:none}
+
+    /* NAV */
+    .nav{
+      position:fixed;top:0;left:0;right:0;z-index:99;
+      padding:0 32px;height:68px;
+      display:flex;align-items:center;justify-content:space-between;
+      transition:background var(--dur-3) var(--ease),box-shadow var(--dur-3) var(--ease), backdrop-filter var(--dur-3) var(--ease);
+      background:transparent;
+    }
+    .nav.scrolled{
+      background:rgba(12,59,44,0.97);
+      backdrop-filter:blur(14px);
+      box-shadow:0 1px 0 rgba(255,255,255,0.06);
+    }
+    .nav-logo{
+      display:flex;align-items:center;gap:10px;
+      font-family:var(--fd);font-size:20px;color:#fff;text-decoration:none;
+    }
+    .nav-logo-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);flex-shrink:0; box-shadow:0 0 0 4px rgba(237,169,32,.14)}
+
+    .nav-links{display:flex;align-items:center;gap:6px;list-style:none}
+    .nav-links a{
+      font-size:13.5px;color:rgba(255,255,255,.72);
+      padding:8px 12px;border-radius:999px;
+      transition:color var(--dur-1),background var(--dur-1);
+      font-weight:600;
+    }
+    .nav-links a:hover{color:#fff;background:rgba(255,255,255,.1)}
+    .nav-cta-a{background:var(--gold)!important;color:var(--char)!important}
+    .nav-cta-a:hover{background:var(--gold-l)!important}
+
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px;background:none;border:none}
+    .hamburger span{display:block;width:24px;height:2px;background:#fff;border-radius:2px;transition:transform var(--dur-2) var(--ease),opacity var(--dur-1)}
+    .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+    .hamburger.open span:nth-child(2){opacity:0}
+    .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+    .mobile-menu{
+      display:none;position:fixed;inset:0;background:var(--forest);
+      z-index:98;padding:86px 32px 40px;
+      flex-direction:column;gap:6px
+    }
+    .mobile-menu.open{display:flex}
+    .mobile-menu a{
+      font-size:22px;font-family:var(--fd);color:rgba(255,255,255,.85);
+      text-decoration:none;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.08);
+      transition:color var(--dur-1)
+    }
+    .mobile-menu a:hover{color:var(--gold)}
+    .mobile-menu .m-cta{
+      margin-top:10px;background:var(--gold);color:var(--char);
+      font-family:var(--fb);font-size:15px;font-weight:800;
+      padding:14px 24px;border-radius:8px;text-align:center;border-bottom:none
+    }
+
+    /* HERO */
+    .hero{
+      min-height:100svh;
+      background:linear-gradient(135deg,var(--forest) 0%, #08301f 60%, #071f16 100%);
+      position:relative;
+      display:grid;grid-template-columns:1fr 1fr;
+      overflow:hidden;
+    }
+    .hero::before{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:
+        radial-gradient(ellipse 78% 60% at 75% 35%,rgba(237,169,32,.10) 0%,transparent 70%),
+        radial-gradient(ellipse 60% 80% at 10% 90%,rgba(22,92,67,.65) 0%,transparent 62%),
+        radial-gradient(ellipse 60% 60% at 25% 25%,rgba(212,236,250,.10) 0%,transparent 60%);
+      opacity:.95;
+    }
+
+    .hero-left{
+      position:relative;z-index:2;
+      display:flex;flex-direction:column;justify-content:space-between;
+      padding:112px 56px 70px 72px;
+      gap:30px;
+    }
+
+    .hero-eyebrow{
+      display:inline-flex;align-items:center;gap:10px;
+      font-family:var(--fm);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--sage);margin-bottom:18px
+    }
+    .hero-eyebrow::before{content:"";width:32px;height:1px;background:var(--sage)}
+
+    .hero-h1{
+      font-family:var(--fd);
+      font-size:clamp(42px,4.6vw,74px);
+      line-height:1.02;
+      color:#fff;
+      letter-spacing:-.025em;
+      margin-bottom:18px;
+    }
+    .hero-h1 em{font-style:italic;color:var(--gold)}
+
+    .hero-body{
+      font-size:16px;color:rgba(255,255,255,.62);
+      max-width:420px;line-height:1.8;font-weight:300;margin-bottom:26px
+    }
+
+    .hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:0}
+
+    .btn{
+      display:inline-flex;align-items:center;gap:10px;
+      font-size:14px;font-weight:700;
+      padding:13px 22px;border-radius:10px;
+      transition:transform var(--dur-1) var(--ease),box-shadow var(--dur-1) var(--ease),background var(--dur-1) var(--ease),border-color var(--dur-1) var(--ease);
+      cursor:pointer;border:none;font-family:var(--fb);
+    }
+    .btn-gold{background:var(--gold);color:var(--char)}
+    .btn-gold:hover{background:var(--gold-l);transform:translateY(-1px);box-shadow:0 10px 26px rgba(237,169,32,.22)}
+
+    .btn-outline{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.86)}
+    .btn-outline:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.35);transform:translateY(-1px)}
+
+    .play-icon{width:22px;height:22px;border-radius:50%;border:1.6px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:9px;padding-left:1px}
+
+    .hero-stats{
+      margin-top:10px;
+      display:flex;border-top:1px solid rgba(255,255,255,.10);
+      padding-top:26px
+    }
+    .stat{flex:1; padding-right:28px}
+    .stat:not(:first-child){padding-left:28px;padding-right:0;border-left:1px solid rgba(255,255,255,.10)}
+    .stat-n{font-family:var(--fm);font-size:30px;font-weight:800;color:#fff;line-height:1;margin-bottom:6px}
+    .stat-n sup{font-size:14px;color:var(--gold)}
+    .stat-l{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.04em;line-height:1.25}
+
+    /* RIGHT */
+    .hero-right{position:relative;overflow:hidden;}
+    .hero-img{
+      position:absolute;inset:0;
+      background:url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1400&q=80&auto=format&fit=crop') center/cover no-repeat;
+      filter:saturate(1.05);
+    }
+    .hero-img::after{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(135deg,rgba(12,59,44,.72) 0%,rgba(12,59,44,.20) 55%,rgba(7,31,22,.92) 100%);
+    }
+
+    .hero-card{
+      position:absolute;bottom:56px;left:-22px;
+      width:292px;
+      background:rgba(250,250,249,.97);
+      backdrop-filter:blur(16px);
+      border-radius:12px;
+      padding:22px 22px 18px;
+      box-shadow:0 24px 68px rgba(0,0,0,.28),0 1px 0 rgba(255,255,255,.6) inset;
+      z-index:3;
+      border:1px solid rgba(255,255,255,.25);
+    }
+
+    .hc-label{font-family:var(--fm);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);margin-bottom:8px}
+    .hc-title{font-family:var(--fd);font-size:14px;color:var(--forest-mid);margin-bottom:14px;line-height:1.3}
+
+    .hc-rows{display:flex;flex-direction:column;gap:8px}
+    .hc-row{display:flex;justify-content:space-between;align-items:center;font-size:12.5px}
+    .hc-sup{color:var(--char);font-weight:700;letter-spacing:-.01em}
+    .hc-price{color:rgba(25,25,23,.55);font-weight:700;font-family:var(--fm);font-size:12px}
+    .hc-row.winner .hc-price{color:var(--terra)}
+
+    .hc-badge{
+      margin-top:14px;
+      padding:8px 10px;
+      background:rgba(12,59,44,.96);
+      border-radius:8px;
+      font-family:var(--fm);
+      font-size:10px;
+      letter-spacing:.08em;
+      color:var(--sand);
+      display:flex;align-items:center;gap:8px
+    }
+    .hc-dot{width:8px;height:8px;border-radius:50%;background:var(--sage);animation:pulse 2.6s ease-in-out infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+    .cold-bar{
+      position:absolute;top:0;right:-2px;width:6px;height:100%;
+      background:linear-gradient(180deg,var(--ice) 0%,var(--ice-mid) 35%,var(--sage) 65%,var(--forest) 100%);
+      opacity:.55;
+      z-index:2;
+      filter:saturate(1.1);
+    }
+
+    /* SECTIONS */
+    .sw{max-width:1180px;margin:0 auto;padding:0 32px}
+    .section{
+      padding:92px 0;
+      background:transparent;
+    }
+    .eyebrow{display:flex;align-items:center;gap:10px;font-family:var(--fm);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);margin-bottom:14px}
+    .eyebrow::before{content:"";width:24px;height:1px;background:var(--sage)}
+    .s-h2{font-family:var(--fd);font-size:clamp(30px,3.3vw,54px);color:var(--forest);line-height:1.1;letter-spacing:-.02em}
+    .s-h2 em{font-style:italic;color:var(--terra)}
+
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity var(--dur-3) var(--ease),transform var(--dur-3) var(--ease)}
+    .reveal.in{opacity:1;transform:none}
+
+    /* HOW */
+    .how{background:var(--white)}
+    .how-inner{display:grid;grid-template-columns:360px 1fr;gap:84px;align-items:start}
+    .how-lede{font-size:15.5px;color:var(--dim);margin-top:20px;max-width:290px;line-height:1.85}
+    .steps{display:flex;flex-direction:column}
+
+    .step{display:grid;grid-template-columns:48px 1fr;gap:20px;padding:28px 0;border-bottom:1px solid var(--border)}
+    .step:first-child{padding-top:0}
+    .step:last-child{border-bottom:none}
+    .step-track{display:flex;flex-direction:column;align-items:center}
+    .step-badge{width:38px;height:38px;border-radius:50%;border:1.6px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:11.5px;color:var(--sage);flex-shrink:0}
+    .step:hover .step-badge{background:var(--gold);border-color:var(--gold);color:var(--char)}
+    .step-line{width:1px;flex:1;background:var(--border);margin-top:8px}
+    .step:last-child .step-line{display:none}
+
+    .step-title{font-size:16px;font-weight:800;color:var(--char);margin-bottom:6px}
+    .step-body{font-size:14px;color:var(--dim);line-height:1.75}
+    .step-chip{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:rgba(12,59,44,.06);border-radius:999px;padding:4px 12px;font-size:11.5px;color:var(--forest-mid);font-weight:700}
+
+    .feat-strip{margin-top:62px;background:var(--forest);border-radius:12px;padding:28px 30px;display:grid;grid-template-columns:repeat(4,1fr)}
+    .feat{padding-right:0}
+    .feat:not(:first-child){padding-left:26px;border-left:1px solid rgba(255,255,255,.10)}
+    .feat-icon{font-size:20px;margin-bottom:10px}
+    .feat-title{font-size:13px;font-weight:900;color:#fff;margin-bottom:4px;line-height:1.3}
+    .feat-desc{font-size:12px;color:rgba(255,255,255,.46);line-height:1.6}
+
+    /* PROOF */
+    .proof{background:var(--sand)}
+    .proof-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px;gap:32px}
+    .rating-block{text-align:right;flex-shrink:0}
+    .rating-n{font-family:var(--fm);font-size:46px;font-weight:900;color:var(--forest);line-height:1}
+    .rating-stars{color:var(--gold);font-size:15px;letter-spacing:3px;margin:4px 0}
+    .rating-label{font-size:12px;color:var(--dim)}
+
+    .cards{display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:14px;align-items:start}
+    .tcard{
+      background:var(--white);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:28px;
+      display:flex;flex-direction:column;gap:20px;
+      transition:transform var(--dur-2) var(--ease),box-shadow var(--dur-2) var(--ease),border-color var(--dur-2) var(--ease);
+    }
+    .tcard:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(12,59,44,.10);border-color:rgba(12,59,44,.25)}
+    .tcard.fc{background:var(--forest);border-color:transparent}
+    .tcard.fc:hover{border-color:var(--gold);box-shadow:0 16px 48px rgba(12,59,44,.25)}
+
+    .schip{display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:var(--char);font-family:var(--fm);font-size:10px;font-weight:900;letter-spacing:.06em;padding:5px 12px;border-radius:999px;align-self:flex-start}
+    .fc .schip{background:rgba(237,169,32,.18);color:var(--gold)}
+
+    .tquote{font-family:var(--fd);font-size:17px;font-style:italic;line-height:1.55;color:var(--char);flex:1}
+    .fc .tquote{color:rgba(255,255,255,.92);font-size:18.8px}
+
+    .tperson{display:flex;align-items:center;gap:12px}
+    .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:12px;color:#fff;flex-shrink:0}
+    .tname{font-size:13px;font-weight:900;color:var(--char);line-height:1.25}
+    .fc .tname{color:#fff}
+    .trole{font-size:11.5px;color:var(--dim);line-height:1.35}
+    .fc .trole{color:rgba(255,255,255,.45)}
+
+    .metrics{margin-top:48px;border:1px solid var(--border);border-radius:12px;background:var(--white);padding:28px 36px;display:flex;align-items:center;gap:24px}
+    .metrics-lbl{font-family:var(--fm);font-size:9.6px;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);white-space:nowrap;padding-right:26px;border-right:1px solid var(--border)}
+    .metrics-items{display:flex;flex:1;gap:0}
+    .metric{flex:1}
+    .metric:not(:first-child){padding-left:26px;border-left:1px solid var(--border)}
+    .metric-n{font-family:var(--fm);font-size:24px;font-weight:900;color:var(--forest);line-height:1;margin-bottom:4px}
+    .metric-d{font-size:12px;color:var(--dim)}
+
+    .metrics-cta{padding-left:26px;border-left:1px solid var(--border)}
+
+    .btn-terra{background:var(--terra);color:#fff;white-space:nowrap;border-radius:10px; padding:13px 18px;display:inline-flex;align-items:center;gap:10px;font-family:var(--fb);font-weight:900;transition:transform var(--dur-1) var(--ease),box-shadow var(--dur-1) var(--ease),background var(--dur-1) var(--ease)}
+    .btn-terra:hover{background:#d4683a;transform:translateY(-1px);box-shadow:0 10px 28px rgba(200,95,46,.26)}
+
+    /* NOTES (tiny unique section) */
+    .notes{background:var(--forest);padding:86px 0}
+    .notes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.06);border-radius:12px;overflow:hidden}
+    .note-card{background:var(--forest);padding:34px}
+    .note-tag{font-family:var(--fm);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+    .note-h{font-family:var(--fd);font-size:19px;color:#fff;margin-bottom:14px;line-height:1.35}
+    .note-body{font-size:13px;color:rgba(255,255,255,.52);line-height:1.8}
+    .note-body strong{color:rgba(255,255,255,.82);font-weight:700}
+
+    /* FOOTER */
+    .footer-strip{background:var(--forest);padding:22px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .footer-strip span{font-family:var(--fm);font-size:10px;letter-spacing:.1em;color:rgba(255,255,255,.32)}
+    .footer-strip strong{color:rgba(255,255,255,.65)}
+
+    /* RESPONSIVE */
+    @media(max-width:980px){
+      .hero{grid-template-columns:1fr;min-height:auto}
+      .hero-right{min-height:420px}
+      .hero-left{padding:98px 32px 54px 32px;}
+      .hero-card{bottom:24px;left:22px;width:240px}
+      .how-inner{grid-template-columns:1fr;gap:46px}
+      .feat-strip{grid-template-columns:1fr 1fr;gap:20px;padding:26px}
+      .feat:nth-child(n+3){border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.10);padding-top:20px}
+      .proof-top{flex-direction:column;align-items:flex-start}
+      .rating-block{text-align:left}
+      .cards{grid-template-columns:1fr}
+      .metrics{flex-wrap:wrap;gap:16px}
+      .metrics-items{flex-wrap:wrap;gap:16px}
+      .metrics-lbl{width:100%;border-right:none;padding-right:0;margin-right:0;border-bottom:1px solid var(--border);padding-bottom:14px}
+      .metric:not(:first-child){border-left:none;padding-left:0}
+      .metric{min-width:140px}
+      .metrics-cta{padding-left:0;border-left:none;width:100%}
+      .metrics-cta .btn-terra{width:100%;justify-content:center}
+      .notes-grid{grid-template-columns:1fr}
+      .note-card{border-bottom:1px solid rgba(255,255,255,.08)}
+      .note-card:last-child{border-bottom:none}
+    }
+    @media(max-width:640px){
+      .nav-links{display:none}
+      .hamburger{display:flex}
+      .hero-left{padding:90px 20px 44px 20px}
+      .hero-eyebrow{margin-bottom:14px}
+      .hero-body{max-width:unset}
+      .hero-stats{flex-direction:column;gap:18px}
+      .stat{padding-right:0}
+      .stat:not(:first-child){padding-left:0;border-left:none;padding-top:18px;border-top:1px solid rgba(255,255,255,.08)}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      .reveal{opacity:1;transform:none;transition:none}
+      .hc-dot{animation:none}
+      *{scroll-behavior:auto;transition-duration:.01ms!important}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav" style="background:transparent">
+  <a href="#" class="nav-logo"><span class="nav-logo-dot"></span>Starfruit Express</a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#proof">Restaurants</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="contact.html" class="nav-cta-a">Get started</a></li>
+  </ul>
+  <button class="hamburger" id="ham" aria-label="Menu" type="button">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#how" onclick="closeMenu()">How it works</a>
+  <a href="#proof" onclick="closeMenu()">Restaurants</a>
+  <a href="solutions.html" onclick="closeMenu()">Solutions</a>
+  <a href="blog.html" onclick="closeMenu()">Blog</a>
+  <a href="contact.html" class="m-cta" onclick="closeMenu()">Get started</a>
+</div>
+
+<!-- SECTION 1: HERO -->
+<section class="hero" aria-label="Starfruit Express hero">
+  <div class="hero-left">
+    <div>
+      <div class="hero-eyebrow">South Florida Restaurant Procurement</div>
+      <h1 class="hero-h1">Cut food costs.<br/>Keep <em>cold chain</em><br/>intact.</h1>
+      <p class="hero-body">Compare suppliers, lock in prices, and get refrigerated delivery coordinated door-to-door — built for real kitchens that run on time.</p>
+      <div class="hero-actions">
+        <a href="contact.html" class="btn btn-gold">See your savings →</a>
+        <a href="solutions.html" class="btn btn-outline"><span class="play-icon">▶</span>See the platform</a>
+      </div>
+    </div>
+
+    <div class="hero-stats" aria-label="Key stats">
+      <div class="stat">
+        <div class="stat-n">18<sup>%</sup></div>
+        <div class="stat-l">Avg. cost reduction</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">340<sup>+</sup></div>
+        <div class="stat-l">Restaurants served</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">48<sup>h</sup></div>
+        <div class="stat-l">Avg. onboarding time</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right" aria-hidden="true">
+    <div class="hero-img"></div>
+    <div class="cold-bar"></div>
+    <div class="hero-card">
+      <div class="hc-label">Live compare · Organic Roma Tomato</div>
+      <div class="hc-title">Best price found this week</div>
+      <div class="hc-rows">
+        <div class="hc-row"><span class="hc-sup">Sysco Miami</span><span class="hc-price">$28.40 / cs</span></div>
+        <div class="hc-row"><span class="hc-sup">Gordon Food Svc</span><span class="hc-price">$27.10 / cs</span></div>
+        <div class="hc-row winner"><span class="hc-sup">Produce Plus (local)</span><span class="hc-price">$21.80 ↓</span></div>
+      </div>
+      <div class="hc-badge"><span class="hc-dot"></span>Refrigerated · Pickup Tue 6AM</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: HOW IT WORKS -->
+<section class="how reveal" id="how">
+  <div class="sw">
+    <div class="how-inner">
+      <div class="how-left reveal d1">
+        <div class="eyebrow">The process</div>
+        <h2 class="s-h2">Works the way your <em>kitchen</em> does</h2>
+        <p class="how-lede">No new software to learn. Tell us what you need, we surface the best prices, and handle everything from pickup to your back door.</p>
+      </div>
+
+      <div class="steps" aria-label="How it works steps">
+        <div class="step reveal d1">
+          <div class="step-track"><div class="step-badge">1</div><div class="step-line"></div></div>
+          <div class="step-body-wrap">
+            <div class="step-title">Tell us what you need</div>
+            <p class="step-body">Upload your par list or enter items manually. We pull supplier pricing across produce, protein, dry goods, dairy.</p>
+            <div class="step-chip"><span>📋</span>Works with your existing list</div>
+          </div>
+        </div>
+
+        <div class="step reveal d2">
+          <div class="step-track"><div class="step-badge">2</div><div class="step-line"></div></div>
+          <div class="step-body-wrap">
+            <div class="step-title">Compare, side by side</div>
+            <p class="step-body">Price, pack size, lead time, and cold-chain details in one place. Filter by category and delivery window.</p>
+            <div class="step-chip"><span>⚖️</span>Real-time supplier data</div>
+          </div>
+        </div>
+
+        <div class="step reveal d3">
+          <div class="step-track"><div class="step-badge">3</div><div class="step-line"></div></div>
+          <div class="step-body-wrap">
+            <div class="step-title">We handle the rest</div>
+            <p class="step-body">Confirm your order and we coordinate refrigerated transit and delivery with temperature awareness.</p>
+            <div class="step-chip"><span>🌡️</span>Cold-chain support</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feat-strip reveal" aria-label="Cold-chain differentiators">
+      <div class="feat"><div class="feat-icon">🌡️</div><div class="feat-title">Cold chain supported</div><div class="feat-desc">Temperature-minded transit on every order</div></div>
+      <div class="feat"><div class="feat-icon">✓</div><div class="feat-title">Vetted suppliers</div><div class="feat-desc">Licensed, insured partners</div></div>
+      <div class="feat"><div class="feat-icon">⏱</div><div class="feat-title">24–48h delivery</div><div class="feat-desc">Kitchen-ready windows, 6 days/week</div></div>
+      <div class="feat"><div class="feat-icon">📊</div><div class="feat-title">Spend dashboard</div><div class="feat-desc">Track food costs week over week</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: SOCIAL PROOF -->
+<section class="proof" id="proof">
+  <div class="sw">
+    <div class="proof-top reveal" style="display:flex">
+      <div>
+        <div class="eyebrow">What restaurants say</div>
+        <h2 class="s-h2">They stopped guessing.<br/><em>Costs dropped.</em></h2>
+      </div>
+      <div class="rating-block">
+        <div class="rating-n">4.9</div>
+        <div class="rating-stars">★★★★★</div>
+        <div class="rating-label">from 120+ restaurant reviews</div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <div class="tcard fc reveal d1">
+        <div class="schip">↓ 22% food cost</div>
+        <p class="tquote">"We were price-shopping three suppliers every Monday morning — calling, emailing, waiting. Starfruit killed that ritual."</p>
+        <div class="tperson">
+          <div class="avatar" style="background:var(--terra)">MR</div>
+          <div><div class="tname">Marco Reyes</div><div class="trole">Executive Chef · Boca Norte</div></div>
+        </div>
+      </div>
+
+      <div class="tcard reveal d2">
+        <div class="schip">↓ $1,200/mo saved</div>
+        <p class="tquote">"The side-by-side view is something I didn't know I needed. First week we switched protein suppliers."</p>
+        <div class="tperson">
+          <div class="avatar" style="background:#5A7D6F">AL</div>
+          <div><div class="tname">Angela Lim</div><div class="trole">Owner · The Lemon Perch</div></div>
+        </div>
+      </div>
+
+      <div class="tcard reveal d3">
+        <div class="schip">Zero cold-chain breaks</div>
+        <p class="tquote">"Every delivery has temperature-minded handling. That trust alone is worth it."</p>
+        <div class="tperson">
+          <div class="avatar" style="background:#8B6F4E">DS</div>
+          <div><div class="tname">David Santos</div><div class="trole">F&amp;B Director · Havana House Group</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics reveal">
+      <div class="metrics-lbl">Network totals · 2024</div>
+      <div class="metrics-items">
+        <div class="metric"><div class="metric-n">$4.2M</div><div class="metric-d">Saved for restaurants</div></div>
+        <div class="metric"><div class="metric-n">340+</div><div class="metric-d">Active clients</div></div>
+        <div class="metric"><div class="metric-n">98%</div><div class="metric-d">On-time delivery</div></div>
+        <div class="metric"><div class="metric-n">60+</div><div class="metric-d">Vetted suppliers</div></div>
+      </div>
+      <div class="metrics-cta"><a href="contact.html" class="btn-terra">See your savings →</a></div>
+    </div>
+  </div>
+</section>
+
+
+  <footer class="footer" style="background:var(--forest);padding:28px 0;border-top:1px solid rgba(255,255,255,.06)">
+  <div style="max-width:1180px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">
+    <div style="font-family:var(--fd);font-size:17px;color:rgba(255,255,255,.65)">Starfruit Express</div>
+    <nav style="display:flex;gap:4px;flex-wrap:wrap">
+      <a href="index.html" style="font-size:13px;color:rgba(255,255,255,.4);padding:5px 10px;border-radius:999px;font-weight:600">Home</a>
+      <a href="solutions.html" style="font-size:13px;color:rgba(255,255,255,.4);padding:5px 10px;border-radius:999px;font-weight:600">Solutions</a>
+      <a href="about.html" style="font-size:13px;color:rgba(255,255,255,.4);padding:5px 10px;border-radius:999px;font-weight:600">About</a>
+      <a href="blog.html" style="font-size:13px;color:rgba(255,255,255,.4);padding:5px 10px;border-radius:999px;font-weight:600">Blog</a>
+      <a href="contact.html" style="font-size:13px;color:rgba(255,255,255,.4);padding:5px 10px;border-radius:999px;font-weight:600">Contact</a>
+    </nav>
+    <div style="font-family:var(--fm);font-size:10px;color:rgba(255,255,255,.25);letter-spacing:.06em">© 2026 Starfruit Express Corp.</div>
+  </div>
+</footer>
+
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive:true });
+
+  const ham = document.getElementById('ham');
+  const menu = document.getElementById('mobile-menu');
+  ham.addEventListener('click', () => {
+    ham.classList.toggle('open');
+    menu.classList.toggle('open');
+    document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+  });
+
+  function closeMenu() {
+    ham.classList.remove('open');
+    menu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // reveal animations
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin:'0px 0px -30px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
